@@ -1,0 +1,359 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/dts-v1/;
+/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+ */
+#include "ipq8074.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	#address-cells = <0x2>;
+	#size-cells = <0x2>;
+	model = "Netgear AX6000";
+	compatible = "netgear,rax120", "qcom,ipq8074";
+	interrupt-parent = <&intc>;
+
+	aliases {
+		serial0 = &blsp1_uart5;
+		serial1 = &blsp1_uart3;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs-append = " swiotlb=1";
+	};
+	
+	ledc_pins: ledc_pinmux {
+		led_clk {
+			pins = "gpio18";
+			function = "led0";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+		led_data {
+			pins = "gpio19";
+			function = "led1";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+		led_clr {
+			pins = "gpio20";
+			function = "led2";
+			drive-strength = <8>;
+			bias-pull-up;
+		};
+	};
+	
+	leds {
+	compatible = "gpio-leds";
+	pinctrl-0 = <&ledc_pins>;
+	pinctrl-names = "default";
+	status = "ok";
+	led0 {
+		label = "ipq::multigig_red";
+		linux,default-trigger = "led_wifi_son_green";
+	};
+	led1 {
+		label = "ipq::led1";
+		linux,default-trigger = "led_wifi_son_orange";
+	};
+	led2 {
+		label = "ipq::led2";
+		linux,default-trigger = "led_wifi_son_blue";
+	};
+	led3 {
+		label = "ipq::wifi0";
+		linux,default-trigger = "led_2g";
+	};
+	led4 {
+		label = "ipq::wifi1";
+		linux,default-trigger = "led_5gl";
+	};
+	led5 {
+		label = "ipq::led5";
+		linux,default-trigger = "led_5gh";
+	};
+	led6 {
+		label = "ipq::led6";
+		linux,default-trigger = "led_lan";
+	};
+	led7 {
+		label = "ipq::wan";
+		linux,default-trigger = "led_wan";
+	};
+	led8 {
+		label = "ipq::usb1";
+		linux,default-trigger = "led_10g_link";
+	};
+	led9 {
+		label = "ipq::usb2";
+		linux,default-trigger = "led_sfp";
+	};
+	led10 {
+		label = "ipq::led10";
+		linux,default-trigger = "led_bt";
+	};
+	led11 {
+		label = "ipq::led11";
+		linux,default-trigger = "none";
+	};
+	led12 {
+		label = "ipq::multigig_white";
+		linux,default-trigger = "none";
+	};
+};
+
+	button_pins: button_pins {
+		wps_button {
+			pins = "gpio57";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-up;
+		};
+	};
+	
+	
+};
+	
+
+
+&blsp1_i2c2 {
+    status = "ok";
+};
+
+
+&blsp1_spi1 {
+	status = "ok";
+
+	m25p80@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <50000000>;
+	};
+};
+
+&blsp1_uart3 {
+	status = "ok";
+};
+
+&blsp1_uart5 {
+	status = "ok";
+};
+
+&pcie0 {
+	status = "ok";
+	perst-gpio = <&tlmm 61 0x1>;
+};
+
+&pcie1 {
+	status = "ok";
+	perst-gpio = <&tlmm 58 0x1>;
+};
+
+&pcie_phy0 {
+	status = "ok";
+};
+
+&pcie_phy1 {
+	status = "ok";
+};
+
+&qpic_bam {
+	status = "ok";
+};
+
+&qpic_nand {
+	status = "ok";
+
+	nand@0 {
+		reg = <0>;
+		nand-ecc-strength = <4>;
+		nand-ecc-step-size = <512>;
+		nand-bus-width = <8>;
+	
+	partitions {
+		    compatible = "fixed-partitions";
+		    #address-cells = <1>;
+		    #size-cells = <1>;
+		    
+		    partition@7500000 {
+			reg = <0x7500000 0x900000>;
+			label = "0:WIFIFW_1";
+			read-only;
+		    };
+
+		    partition@3e00000 {
+			reg = <0x3e00000 0x900000>;
+			label = "0:WIFIFW";
+			read-only;
+		    };
+
+		    partition@900000 {
+			reg = <0x900000 0x80000>;
+			label = "0:DEVCFG";
+			read-only;
+		    };
+
+		    partition@4700000 {
+			reg = <0x4700000 0x2e00000>;
+			label = "rootfs_1";
+		    };
+
+		    partition@f80000 {
+			reg = <0xf80000 0x80000>;
+			label = "0:ART";
+			read-only;
+		    };
+
+		    partition@980000 {
+			reg = <0x980000 0x80000>;
+			label = "0:DEVCFG_1";
+			read-only;
+		    };
+
+		    partition@a80000 {
+			reg = <0xa80000 0x80000>;
+			label = "0:APDP_1";
+			read-only;
+		    };
+
+		    partition@100000 {
+			reg = <0x100000 0x100000>;
+			label = "0:MIBIB";
+			read-only;
+		    };
+
+		    partition@1000000 {
+			reg = <0x1000000 0x2e00000>;
+			label = "rootfs";
+		    };
+
+		    partition@a00000 {
+			reg = <0xa00000 0x80000>;
+			label = "0:APDP";
+			read-only;
+		    };
+
+		    partition@d80000 {
+			reg = <0xd80000 0x100000>;
+			label = "0:APPSBL";
+			read-only;
+		    };
+
+		    partition@0 {
+			reg = <0x00 0x100000>;
+			label = "0:SBL1";
+			read-only;
+		    };
+
+		    partition@e80000 {
+			reg = <0xe80000 0x100000>;
+			label = "0:APPSBL_1";
+			read-only;
+		    };
+
+		    partition@c00000 {
+			reg = <0xc00000 0x80000>;
+			label = "0:CDT";
+			read-only;
+		    };
+
+		    partition@b00000 {
+			reg = <0xb00000 0x80000>;
+			label = "0:RPM";
+			read-only;
+		    };
+
+		    partition@b80000 {
+			reg = <0xb80000 0x80000>;
+			label = "0:RPM_1";
+			read-only;
+		    };
+
+		    partition@7e00000 {
+			reg = <0x7e00000 0x80000>;
+			label = "0:ETHPHYFW";
+			read-only;
+		    };
+
+		    partition@d00000 {
+			reg = <0xd00000 0x80000>;
+			label = "0:APPSBLENV";
+			read-only;
+		    };
+
+		    partition@c80000 {
+			reg = <0xc80000 0x80000>;
+			label = "0:CDT_1";
+			read-only;
+		    };
+
+		    partition@280000 {
+			reg = <0x280000 0x80000>;
+			label = "0:BOOTCONFIG1";
+			read-only;
+		    };
+
+		    partition@200000 {
+			reg = <0x200000 0x80000>;
+			label = "0:BOOTCONFIG";
+			read-only;
+		    };
+
+		    partition@600000 {
+			reg = <0x600000 0x300000>;
+			label = "0:QSEE_1";
+			read-only;
+		    };
+
+		    partition@300000 {
+			reg = <0x300000 0x300000>;
+			label = "0:QSEE";
+			read-only;
+		    };
+		};
+	};
+};
+	
+&sdhc_1 {
+	status = "ok";
+};
+
+&qusb_phy_0 {
+	status = "ok";
+};
+
+&qusb_phy_1 {
+	status = "ok";
+};
+
+&ssphy_0 {
+	status = "ok";
+};
+
+&ssphy_1 {
+	status = "ok";
+};
+
+&usb_0 {
+	status = "ok";
+};
+
+&usb_1 {
+	status = "ok";
+};
+
+&mdio {
+	status = "okay";
+
+	pinctrl-0 = <&mdio_pins>;
+	pinctrl-names = "default";
+};
+
+&wifi {
+	status = "okay";
+	
+};
+
