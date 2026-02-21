@@ -46,10 +46,18 @@ define U-Boot/an7583_rfb
   BL31_IMAGE:=an7583-bl31.bin
 endef
 
+define U-Boot/an7581_chainload
+  NAME:=AN7581 Chainloader
+  UBOOT_CONFIG:=an7581_w1700k
+  BUILD_DEVICES:=airoha_an7581_w1700k
+  BUILD_SUBTARGET:=an7581
+endef
+
 UBOOT_TARGETS := \
 	en7523_rfb \
 	an7581_rfb \
-	an7583_rfb
+	an7583_rfb \
+	an7581_chainload
 
 UBOOT_CUSTOMIZE_CONFIG := \
 	--disable TOOLS_KWBIMAGE \
@@ -99,6 +107,9 @@ define Build/InstallDev
 ifeq ($(UBOOT_IMAGE),u-boot.fip)
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/bl2.fip $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-bl2.fip
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/u-boot.fip $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-bl31-u-boot.fip
+else
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/u-boot.bin $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-u-boot.bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/u-boot.dtb $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-u-boot.dtb
 endif
 endef
 

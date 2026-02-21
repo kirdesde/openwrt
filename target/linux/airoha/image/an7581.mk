@@ -12,6 +12,18 @@ define Build/an7581-bl31-uboot
   cat $(STAGING_DIR_IMAGE)/an7581_$1-bl31-u-boot.fip >> $@
 endef
 
+define Build/an7581-chainloader
+	$(TOPDIR)/scripts/an7581-chainloader.py \
+		--build-fit $(abspath $@) \
+		--uboot-bin $(STAGING_DIR_IMAGE)/an7581_chainload-u-boot.bin \
+		--uboot-dtb $(STAGING_DIR_IMAGE)/an7581_chainload-u-boot.dtb \
+		--its $(CURDIR)/an7581-uboot-chainload.its \
+		--workdir $(KDIR)/chainload-fit-$(notdir $@) \
+		--mkimage $(STAGING_DIR_HOST)/bin/mkimage \
+		--lzma $(STAGING_DIR_HOST)/bin/lzma \
+		--dtc-path $(LINUX_DIR)/scripts/dtc
+endef
+
 define Device/FitImageLzma
 	KERNEL_SUFFIX := -uImage.itb
 	KERNEL = kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(DEVICE_DTS).dtb

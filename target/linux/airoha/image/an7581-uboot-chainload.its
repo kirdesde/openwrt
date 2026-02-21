@@ -1,0 +1,43 @@
+/dts-v1/;
+
+/ {
+  description = "AN7581 chainloader FIT (lzma + dtb)";
+  #address-cells = <1>;
+
+  images {
+    uboot {
+      description = "Second-stage U-Boot";
+      data = /incbin/("u-boot.bin.lzma");
+      type = "kernel";
+      arch = "arm64";
+      os = "linux";
+      compression = "lzma";
+      load = <0x81800000>;
+      entry = <0x81800000>;
+      hash-1 {
+        algo = "sha1";
+      };
+    };
+
+    fdt-1 {
+      description = "U-Boot FDT";
+      data = /incbin/("u-boot.dtb");
+      type = "flat_dt";
+      arch = "arm64";
+      compression = "none";
+      load = <0x82000000>;
+      hash-1 {
+        algo = "sha1";
+      };
+    };
+  };
+
+  configurations {
+    default = "conf-uboot";
+    conf-uboot {
+      description = "Chainload U-Boot with FDT";
+      kernel = "uboot";
+      fdt = "fdt-1";
+    };
+  };
+};
