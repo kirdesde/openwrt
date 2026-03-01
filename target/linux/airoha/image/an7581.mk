@@ -24,6 +24,20 @@ define Build/an7581-chainloader
 		--dtc-path $(LINUX_DIR)/scripts/dtc
 endef
 
+define Build/an7581-uboot-fit
+	$(INSTALL_DIR) $(KDIR)/chainload-fit
+	$(CP) $(STAGING_DIR_IMAGE)/an7581_chainload-u-boot.bin $(KDIR)/chainload-fit/u-boot.bin
+	$(CP) $(STAGING_DIR_IMAGE)/an7581_chainload-u-boot.dtb $(KDIR)/chainload-fit/u-boot.dtb
+	$(STAGING_DIR_HOST)/bin/lzma e \
+		$(KDIR)/chainload-fit/u-boot.bin \
+		$(KDIR)/chainload-fit/u-boot.bin.lzma
+	cd $(KDIR)/chainload-fit && \
+		PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) $(STAGING_DIR_HOST)/bin/mkimage \
+			-D "-i $(KDIR)/chainload-fit" \
+			-f $(CURDIR)/an7581-uboot-chainload.its \
+			$(abspath $@)
+endef
+
 define Device/FitImageLzma
 	KERNEL_SUFFIX := -uImage.itb
 	KERNEL = kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(DEVICE_DTS).dtb
