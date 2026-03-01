@@ -18,7 +18,8 @@ find_nct7802()
 board=$(board_name)
 
 case "$board" in
-gemtek,w1700k)
+gemtek,w1700k|\
+gemtek,w1700k-ubi)
 	hwmon=$(find_nct7802)
 
 	# Temporarily disable automatic fan control to configure curve
