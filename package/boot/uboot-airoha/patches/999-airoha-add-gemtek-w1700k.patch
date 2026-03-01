@@ -248,6 +248,10 @@ Signed-off-by: Kenneth Kasilag <kenneth@kasilag.me>
 +	};
 +};
 +
++&snfi {
++ status = "okay";
++};
++
 +&spi_nand {
 +	partitions {
 +		compatible = "fixed-partitions";
