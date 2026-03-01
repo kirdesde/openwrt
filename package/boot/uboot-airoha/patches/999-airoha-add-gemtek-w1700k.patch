@@ -163,7 +163,7 @@ Signed-off-by: Kenneth Kasilag <kenneth@kasilag.me>
 +bootled_rec=status:blue
 +boot_ubi=ubi part ubi && run boot_production ; run boot_recovery
 +boot_production=led $bootled_pwr on ; run ubi_read_production && bootm $loadaddr#$bootconf ; led $bootled_pwr off
-+boot_recovery=led $bootled_rec on ; run ubi_read_recovery ; bootm $loadaddr#$bootconf ; led $bootled_rec off
++boot_recovery=led $bootled_rec on ; run ubi_read_recovery ; bootm 0x89000000#$bootconf ; led $bootled_rec off
 +boot_tftp=tftpboot $loadaddr $bootfile && bootm $loadaddr#$bootconf
 +bootconf=config-1
 +bootcmd=boot_ubi
